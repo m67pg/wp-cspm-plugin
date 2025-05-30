@@ -6,12 +6,16 @@ jQuery(function ($) {
     const method = isEdit ? 'PUT' : 'POST';
     const url = isEdit ? `${CSPM.api_url}/${editId}` : CSPM.api_url;
     const headers = {'Authorization': `Bearer ${CSPM.api_key}`, 'Accept': 'application/json'};
+    const xhrFields = { withCredentials: true };
+
+    $.ajax({ url: `${CSPM.csrf_url}`, method: 'GET', headers: headers });
 
     // 編集時：既存データの取得
     if (isEdit) {
         $.ajax({
             url: url + '/edit',
             method: 'GET',
+            xhrFields: xhrFields,
             headers: headers,
             success: function (response) {
                 const data = response.data.crowd_sourcing;
@@ -39,12 +43,18 @@ jQuery(function ($) {
             sort_order: $('#sort_order').val(),
             display: display
         };
+
         $.ajax({
             url: url,
             method: method,
             contentType: 'application/json',
             data: JSON.stringify(payload),
-            headers: headers,
+            xhrFields: xhrFields,
+            crossDomain: true,
+            headers: {
+                'X-XSRF-TOKEN': getCookieValue('XSRF-TOKEN'),
+                'Accept': 'application/json'
+            },
             success: function () {
                 if (isEdit) {
                     // ? 編集時は一覧に戻る
@@ -63,4 +73,9 @@ jQuery(function ($) {
             }
         });
     });
+
+    function getCookieValue(name) {
+        const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? decodeURIComponent(match[1]) : null;
+    }
 });

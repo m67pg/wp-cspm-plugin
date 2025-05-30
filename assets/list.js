@@ -8,10 +8,13 @@ jQuery(function ($) {
                 'Accept': 'application/json'
           };
 
+    $.ajax({ url: `${CSPM.csrf_url}`, method: 'GET', headers: headers });
+
     const loadList = (page = 1) => {
         $.ajax({
             url: `${CSPM.api_url}?page=${page}`,
             method: 'GET',
+            xhrFields: { withCredentials: true },
             headers: headers,
             success: function (response) {
                 // データ本体
@@ -24,7 +27,6 @@ jQuery(function ($) {
                             <td>${crowd_sourcing.display === 1 ? '表示' : '非表示'}</td>
                             <td>
                                 <a href="admin.php?page=crowd_sourcing-edit&id=${crowd_sourcing.id}" class="button">編集</a>
-                                <button class="button delete-button" data-id="${crowd_sourcing.id}">削除</button>
                             </td>
                         </tr>
                     `);
@@ -65,25 +67,5 @@ jQuery(function ($) {
         e.preventDefault();
         const page = $(this).data('page');
         loadList(page);
-    });
-
-
-    // 削除処理
-    $(document).on('click', '.delete-button', function () {
-        if (!confirm('本当に削除しますか？')) return;
-
-        const id = $(this).data('id');
-        $.ajax({
-            url: `${CSPM.api_url}/${id}`,
-            method: 'DELETE',
-            headers: headers,
-            success: function () {
-                alert('削除しました');
-                loadList(); // 再読み込み
-            },
-            error: function () {
-                alert('削除に失敗しました');
-            }
-        });
     });
 });

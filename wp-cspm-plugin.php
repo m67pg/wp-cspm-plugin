@@ -3,10 +3,24 @@
  * Plugin Name: CSプロジェクト管理 Plugin
  */
 
+function add_cspm_role() {
+    $subscriber_role = get_role( 'subscriber' );
+
+    if ( $subscriber_role ) {
+        $subscriber_role->add_cap( 'access_cspm_menu' );
+    }
+
+    $admin_role = get_role( 'administrator' );
+    if ( $admin_role ) {
+        $admin_role->add_cap( 'access_cspm_menu' );
+    }
+}
+add_action( 'init', 'add_cspm_role' );
+
 function cspm_menu() {
-    add_menu_page('クラウドソーシング一覧', 'クラウドソーシング一覧', 'manage_options', 'crowd_sourcing-list', 'crowd_sourcing_list_page');
-    add_submenu_page('crowd_sourcing-list', '新規追加', '新規追加', 'manage_options', 'crowd_sourcing-add', 'crowd_sourcing_add_page');
-    add_submenu_page(null, '編集', '編集', 'manage_options', 'crowd_sourcing-edit', 'crowd_sourcing_edit_page');
+    add_menu_page('クラウドソーシング一覧', 'クラウドソーシング一覧', 'access_cspm_menu', 'crowd_sourcing-list', 'crowd_sourcing_list_page');
+    add_submenu_page('crowd_sourcing-list', '新規追加', '新規追加', 'access_cspm_menu', 'crowd_sourcing-add', 'crowd_sourcing_add_page');
+    add_submenu_page(null, '編集', '編集', 'access_cspm_menu', 'crowd_sourcing-edit', 'crowd_sourcing_edit_page');
 }
 add_action('admin_menu', 'cspm_menu');
 
@@ -42,11 +56,11 @@ function cspm_enqueue_scripts($hook) {
     wp_enqueue_style('cspm-style', plugin_dir_url(__FILE__) . 'assets/admin.css');
 
     wp_localize_script('cspm-list', 'CSPM', array_merge([
-        'api_url' => CSPM_API_URL, 'api_key' => CSPM_API_KEY
+        'api_url' => CSPM_API_URL, 'csrf_url' => CSPM_CSRF_URL, 'api_key' => CSPM_API_KEY
     ], $screen_flags));
 
     wp_localize_script('cspm-form', 'CSPM', array_merge([
-        'api_url' => CSPM_API_URL, 'api_key' => CSPM_API_KEY
+        'api_url' => CSPM_API_URL, 'csrf_url' => CSPM_CSRF_URL, 'api_key' => CSPM_API_KEY
     ], $screen_flags));
 }
 add_action('admin_enqueue_scripts', 'cspm_enqueue_scripts');
