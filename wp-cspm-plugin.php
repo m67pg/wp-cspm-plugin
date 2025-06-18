@@ -56,11 +56,11 @@ function cspm_enqueue_scripts($hook) {
     wp_enqueue_style('cspm-style', plugin_dir_url(__FILE__) . 'assets/admin.css');
 
     wp_localize_script('cspm-list', 'CSPM', array_merge([
-        'api_url' => CSPM_API_URL, 'csrf_url' => CSPM_CSRF_URL, 'api_key' => CSPM_API_KEY
+        'api_url' => CSPM_API_URL, 'api_key' => CSPM_API_KEY
     ], $screen_flags));
 
     wp_localize_script('cspm-form', 'CSPM', array_merge([
-        'api_url' => CSPM_API_URL, 'csrf_url' => CSPM_CSRF_URL, 'api_key' => CSPM_API_KEY
+        'api_url' => CSPM_API_URL, 'api_key' => CSPM_API_KEY
     ], $screen_flags));
 }
 add_action('admin_enqueue_scripts', 'cspm_enqueue_scripts');

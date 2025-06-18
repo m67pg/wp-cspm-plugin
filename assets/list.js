@@ -8,13 +8,10 @@ jQuery(function ($) {
                 'Accept': 'application/json'
           };
 
-    $.ajax({ url: `${CSPM.csrf_url}`, method: 'GET', headers: headers });
-
     const loadList = (page = 1) => {
         $.ajax({
             url: `${CSPM.api_url}?page=${page}`,
             method: 'GET',
-            xhrFields: { withCredentials: true },
             headers: headers,
             success: function (response) {
                 // データ本体
